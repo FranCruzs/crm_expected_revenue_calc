@@ -7,11 +7,10 @@ class CrmLead(models.Model):
         string="Expected Revenue",
         currency_field='company_currency',
         tracking=True,
-        help="Ingrese manualmente o se calculará automáticamente en etapa 41"
+        help="Ingrese manualmente o se calculará automáticamente al presionar Actualizar en etapa 41"
     )
 
-    @api.onchange('stage_id', 'order_ids')
-    def _onchange_stage_orders(self):
+    def action_update_expected_revenue(self):
         """Calcula automáticamente el expected_revenue cuando stage_id == 41"""
         for lead in self:
             if lead.stage_id.id == 41:
@@ -20,3 +19,4 @@ class CrmLead(models.Model):
                     if order.tax_totals:
                         total += order.tax_totals.get('amount_untaxed', 0.0)
                 lead.expected_revenue = total
+        return True
